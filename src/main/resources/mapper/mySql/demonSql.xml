@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.DemonRestMapper">
+
+	<select id="getDemonList" resultType="demonService">
+		SELECT
+		    *
+		    , (SELECT NAME FROM TB_PROJECT WHERE PROJECT_SEQ = demon.PROJECT_SEQ) AS projectName
+		    , (SELECT NAME FROM TB_MODEL WHERE MODEL_SEQ = demon.MODEL_SEQ) AS modelName
+		    , ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_DEMON_SERVICE AS demon
+		WHERE DELETE_FLAG = 0
+			<if test='userId != null and userId != ""' >AND USER_ID=#{userId}</if>
+		ORDER BY demon.DEMON_SERVICE_SEQ DESC
+	</select>
+   
+	<select id="getDemon" resultType="demonService">
+		SELECT
+			*
+			, (SELECT NAME FROM TB_PROJECT WHERE PROJECT_SEQ = demon.PROJECT_SEQ) AS projectName
+		    , (SELECT NAME FROM TB_MODEL WHERE MODEL_SEQ = demon.MODEL_SEQ) AS modelName
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_DEMON_SERVICE AS demon
+		WHERE DEMON_SERVICE_SEQ = #{demonServiceSeq}
+	</select>
+	
+	<select id="duplicateCheckDemonName" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+		TB_DEMON_SERVICE
+		WHERE DELETE_FLAG = 0 
+			AND NAME = #{name}
+	</select>
+	
+	<insert id="insertDemon" parameterType="demonService" useGeneratedKeys="true"
+			keyColumn="DEMON_SERVICE_SEQ" keyProperty="demonServiceSeq">
+		INSERT INTO TB_DEMON_SERVICE(
+			PROJECT_SEQ
+			,MODEL_SEQ
+			,NAME
+			,USER_ID
+   		)
+		VALUES (
+           #{projectSeq}
+		   , #{modelSeq}
+           , #{name}
+           , #{userId}
+       	)
+	</insert>
+	
+	<update id="updateDemon" parameterType="demonService">
+		UPDATE TB_DEMON_SERVICE
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='name != null and name != ""' >,NAME = #{name}</if>
+				<if test='projectSeq != null and projectSeq != ""' >,PROJECT_SEQ = #{projectSeq}</if>
+				<if test='modelSeq != null and modelSeq != ""' >,MODEL_SEQ = #{modelSeq}</if>
+				<if test='deleteFlag != null' >,DELETE_FLAG = #{deleteFlag}</if>
+			</trim>
+		WHERE DEMON_SERVICE_SEQ = #{demonServiceSeq}
+	</update>
+</mapper>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.DataManageRestMapper">
+
+	<select id="getOriginalDataList" resultType="originalData">
+		SELECT 
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_ORIGINAL_DATA 
+		WHERE DELETE_FLAG = 0
+			<if test='userId != null and userId != ""' >AND USER_ID=#{userId}</if>
+		ORDER BY ORIGINAL_DATA_SEQ DESC
+	</select>
+   
+	<select id="getOriginalData" resultType="originalData">
+		SELECT
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM
+		TB_ORIGINAL_DATA
+		WHERE ORIGINAL_DATA_SEQ = #{originalDataSeq}
+	</select>
+	
+	<insert id="insertOriginalData" parameterType="originalData"
+			useGeneratedKeys="true" keyColumn="ORIGINAL_DATA_SEQ" keyProperty="originalDataSeq">
+		INSERT INTO TB_ORIGINAL_DATA(
+   			ORIGINAL_FILE_NAME
+   			, STORED_FILE_NAME
+   			, EXTENSION
+   			, DESCRIPTION
+   			, USER_ID
+   			, FILE_SIZE
+   			)
+		VALUES (
+	          #{originalFileName}
+			  , #{storedFileName}
+			  , #{extension}
+	          , #{description}
+	          , #{userId}
+	          , #{fileSize}
+       	)
+	</insert>
+	
+	<update id="updateOriginalData" parameterType="originalData">
+		UPDATE TB_ORIGINAL_DATA
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='description != null and description != ""' >,DESCRIPTION = #{description}</if>
+				<if test='path != null and path != ""' >,PATH = #{path}</if>
+				<if test='deleteFlag != null' >,DELETE_FLAG = #{deleteFlag}</if>
+			</trim>
+		WHERE ORIGINAL_DATA_SEQ = #{originalDataSeq}
+	</update>
+	
+	<select id="duplicateCheckOriginalData" resultType="java.lang.Integer" parameterType="originalData">
+		SELECT
+		    count(*)
+		FROM TB_ORIGINAL_DATA 
+   		WHERE ORIGINAL_FILE_NAME = #{originalFileName}
+   			AND USER_ID = #{userId} 
+   			AND DELETE_FLAG = 0
+	</select>
+	
+	<select id="isUseCheckOriginalData" resultType="java.lang.Integer">
+		SELECT 
+			count(*) 
+		FROM TB_PREPROCESSED_DATA
+		WHERE DELETE_FLAG = 0
+			AND ORIGINAL_DATA_SEQ = #{originalDataSeq}
+	</select>
+	
+	<select id="getPreprocessedDataList" resultType="preProcessedData">
+		SELECT
+		    *
+		    ,(SELECT NAME FROM TB_PREPROCESSOR AS pre WHERE pre.PREPROCESSOR_SEQ = preData.PREPROCESSOR_SEQ) AS preprocessorName
+		    ,(SELECT ORIGINAL_FILE_NAME FROM TB_ORIGINAL_DATA AS o WHERE o.ORIGINAL_DATA_SEQ = preData.ORIGINAL_DATA_SEQ) AS originalDataName
+		    , ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_PREPROCESSED_DATA AS preData
+		WHERE DELETE_FLAG = 0
+			<if test='userId != null and userId != ""' >AND USER_ID=#{userId}</if>
+		ORDER BY preData.PREPROCESSED_DATA_SEQ DESC
+	</select>
+   
+	<select id="getPreprocessedData" resultType="preProcessedData">
+		SELECT
+		    *
+		    ,(SELECT NAME FROM TB_PREPROCESSOR AS pre WHERE pre.PREPROCESSOR_SEQ = preData.PREPROCESSOR_SEQ) AS preprocessorName
+		    ,(SELECT ORIGINAL_FILE_NAME FROM TB_ORIGINAL_DATA AS o WHERE o.ORIGINAL_DATA_SEQ = preData.ORIGINAL_DATA_SEQ) AS originalDataName
+		    , ifnull(DATE_FORMAT(START_DATETIME, '%Y-%m-%d %T'), '') AS startDatetime
+     		, ifnull(DATE_FORMAT(END_DATETIME, '%Y-%m-%d %T'), '') AS endDatetime
+		    , ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '') AS createDatetime
+		FROM TB_PREPROCESSED_DATA AS preData
+		WHERE preData.PREPROCESSED_DATA_SEQ = #{preprocessedDataSeq}
+	</select>
+	
+	<select id="isUseCheckPreprocessedDataData" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM TB_MODEL
+		WHERE DELETE_FLAG = 0
+			AND (TRAIN_DATA = #{preprocessedDataSeq}
+					OR VALIDATION_DATA = #{preprocessedDataSeq}
+					OR EVALUATION_DATA = #{preprocessedDataSeq})
+	</select>
+	
+	<select id="duplicateCheckPreprocessedData" resultType="java.lang.Integer">
+		SELECT
+		    count(*)
+		FROM TB_PREPROCESSED_DATA 
+   		WHERE NAME = #{name}
+   			AND DELETE_FLAG = 0
+	</select>
+	
+	<insert id="insertPreprocessedData" parameterType="preProcessedData" 
+		useGeneratedKeys="true" keyColumn="PREPROCESSED_DATA_SEQ" keyProperty="preprocessedDataSeq">
+		INSERT INTO TB_PREPROCESSED_DATA(
+				ORIGINAL_DATA_SEQ
+				,PREPROCESSOR_SEQ
+				,NAME
+				,FILE_NAME
+				,EXTENSION
+				,PARAMETERS
+				,USER_ID
+				,DESCRIPTION
+   			)
+		VALUES (
+	          #{originalDataSeq}
+			  , #{preprocessorSeq}
+			  , #{name}
+			  , #{fileName}
+			  , #{extension}
+			  , #{parameters}
+			  , #{userId}
+	          , #{description}
+       	)
+	</insert>
+	
+	<update id="updatePreprocessedData" parameterType="preProcessedData">
+		UPDATE TB_PREPROCESSED_DATA
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='state != null and state != ""' >,STATE = #{state}</if>
+				<if test='path != null and path != ""' >,PATH = #{path}</if>
+			</trim>
+		WHERE PREPROCESSED_DATA_SEQ = #{preprocessedDataSeq}
+	</update>
+	
+	<update id="deletePreprocessedData">
+		UPDATE TB_PREPROCESSED_DATA
+		SET DELETE_FLAG = 1
+		WHERE PREPROCESSED_DATA_SEQ = #{preprocessedDataSeq}
+	</update>
+	
+	<select id="getPreprocessedDataSearchList" parameterType="preProcessedData" resultType="preProcessedData">
+		SELECT
+		    *
+		    ,(SELECT NAME FROM TB_PREPROCESSOR AS pre WHERE pre.PREPROCESSOR_SEQ = preData.PREPROCESSOR_SEQ) AS preprocessorName
+		    ,(SELECT ORIGINAL_FILE_NAME FROM TB_ORIGINAL_DATA AS o WHERE o.ORIGINAL_DATA_SEQ = preData.ORIGINAL_DATA_SEQ) AS originalDataName
+		    , ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_PREPROCESSED_DATA AS preData
+		WHERE DELETE_FLAG = 0
+			AND STATE = #{state}
+			<if test='deleteFlag != null' >AND DELETE_FLAG = #{deleteFlag}</if>
+			<if test='userId != null and userId != ""' >AND USER_ID=#{userId}</if>
+		ORDER BY preData.PREPROCESSED_DATA_SEQ DESC
+	</select>
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.ServerStateRestMapper">
+
+  	<select id="getServerStateList" resultType="monitServer">
+		SELECT 
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_MONIT_SERVER
+		ORDER BY SERVICE_NAME ASC
+	</select>
+	
+	<select id="getServerState" resultType="monitServer">
+		SELECT 
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_MONIT_SERVER
+		WHERE SERVER_SEQ = #{serverSeq}
+	</select>
+
+	<select id="duplicateCheckServer" parameterType="monitServer" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_MONIT_SERVER
+		WHERE IP = #{ip}
+			AND PORT = #{port}
+			AND CONNECT_ID = #{connectId}
+			AND SERVICE_NAME = #{serviceName}
+	</select>
+	
+	<insert id="insertServer" parameterType="monitServer">
+		INSERT INTO TB_MONIT_SERVER(
+			IP
+			,PORT
+			,SERVICE_NAME
+			,STATE
+			,CONNECT_ID
+			,MODULE_PATH
+			,COMMAND_RUN
+			,COMMAND_STATE
+			,COMMAND_KILL
+   		)
+		VALUES (
+        	 #{ip}
+	          , #{port}
+			  , #{serviceName}
+			  , 'STOP'
+	          , #{connectId}
+	          , #{modulePath}
+	          , #{commandRun}
+	          , #{commandState}
+	          , #{commandKill}
+       	)
+	</insert>
+	
+	<update id="updateServer" parameterType="monitServer">
+		UPDATE TB_MONIT_SERVER
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='serviceName != null and serviceName != ""' >,SERVICE_NAME = #{serviceName}</if>
+				<if test='state != null and state != ""' >,STATE = #{state}</if>
+				<if test='connectId != null and connectId != ""' >,CONNECT_ID = #{connectId}</if>
+				<if test='modulePath != null and modulePath != ""' >,MODULE_PATH = #{modulePath}</if>
+				<if test='commandRun != null and commandRun != ""' >,COMMAND_RUN = #{commandRun}</if>
+				<if test='commandState != null and commandState != ""' >,COMMAND_STATE = #{commandState}</if>
+				<if test='commandKill != null and commandKill != ""' >,COMMAND_KILL = #{commandKill}</if>
+			</trim>
+		WHERE SERVER_SEQ = #{serverSeq}
+	</update>
+	
+	<delete id="deleteServer">
+		DELETE FROM TB_MONIT_SERVER 
+		WHERE SERVER_SEQ = #{serverSeq}
+	</delete>
+	
+</mapper>

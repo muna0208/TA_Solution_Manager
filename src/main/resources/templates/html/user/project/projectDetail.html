@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<!-- amchart Resources -->
+	<script th:src="@{js/lib/amchart/core.js}"></script>
+	<script th:src="@{js/lib/amchart/charts.js}"></script>
+	<script th:src="@{js/lib/amchart/animated.js}"></script>
+	
+	<script th:src="@{js/user/project/projectDetail.js}"></script>
+	
+        <!-- page content -->
+		<div>
+			<div class="right_col" role="main" id="myContentsWrap">
+			<input type="hidden" id="projectSeq" th:value="${projectSeq}" />
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title">
+								<h4 class="pdTop_15"><strong id="projectName"></strong>   <small id="description"></small></h4>
+									<div class="text-right">
+										<button type="button" class="btn btn-success btn-sm" onclick="fnInsertModel();" id="startBtn">모델 생성</button>
+										<button type="button" class="btn btn-default btn-sm" onclick="fnDeleteModel();">모델삭제</button>
+										<button type="button" class="btn btn-info btn-sm" onclick="fnComnGetMovePage('projectManage');">목록</button>
+									</div>
+									<div class="pdTB_10" id="createDataTime"></div>
+								<div class="clearfix"></div>
+							</div><!-- //x_title -->
+						</div>
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col-md-3 col-sm-4 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title"><strong>모델</strong></div>
+							<div class="x_content">
+								<div class="projList">
+									<ul id="modelListUl"></ul>
+								</div>
+							</div>
+						</div>
+						<div class="x_panel">
+							<div class="x_title"><strong>데이터셋</strong></div>
+							<div class="x_content">
+								<div class="projList" id="dataSetDiv"></div>
+							</div>
+						</div>
+						<div class="x_panel">
+							<div class="x_title"><strong>알고리즘</strong></div>
+							<div class="x_content">
+								<div class="projList" id="algorithmNameDiv"></div>
+							</div>
+						</div>
+						<div class="x_panel">
+							<div class="x_title"><strong>임베딩 모델</strong></div>
+							<div class="x_content">
+								<div class="projList" id="embeddingModelDiv"></div>
+							</div>
+						</div>
+						<div class="x_panel">
+							<div class="x_title"><strong>사전학습 모델</strong></div>
+							<div class="x_content">
+								<div class="projList" id="pretrainedModelDiv"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- 학습 데이터 -->
+					<div class="col-md-9 col-sm-8 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title">
+			                    <h5><strong>학습 데이터</strong> </h5>
+			                    <ul class="nav navbar-right panel_toolbox">
+			                    	<li><a class="collapse-link" id="trainDataLink"><i class="fa fa-chevron-down"></i></a></li>
+			                      	<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+			                    </ul>
+			                    <div class="clearfix"></div>
+			                </div>
+							<div class="x_content" id="trainDataInfoDiv" style="display:none;">
+								<div id="trainDataDefaultDiv">
+									<h5><strong>파일 기본 정보</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter">
+										<thead>
+											<tr>
+												<th>파일명</th>
+												<th>경로</th>
+												<th>생성시간</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td id="trainDataFileName"></td>
+												<td id="trainDataPath"></td>
+												<td id="trainDataCreateDateTime"></td>
+											</tr>
+											<tr>
+										</tbody>
+									</table>
+								</div><!-- //학습 데이터 정보 -->
+
+								<div id="trainDataSampleDiv" style="display:none;" class="scrollX">
+									<h5><strong>파일 샘플</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter" id="trainDataSampleTable">
+										
+									</table>
+								</div><!-- //학습 데이터-->
+								<div id="trainDataLabelDiv" style="display:none;">
+									<h4><strong>레이블 정보</strong></h4>
+									<div class="chartArea trainDataChartDiv">그래프 영역</div>
+								</div><!-- //학습 데이터 영역 -->
+							</div>
+						</div>
+						
+						<!-- 검증 데이터 -->
+						<div class="x_panel" id="validationDataLayerDiv">
+							<div class="x_title">
+			                    <h5><strong>검증 데이터</strong> </h5>
+			                    <ul class="nav navbar-right panel_toolbox">
+			                    	<li><a class="collapse-link"><i class="fa fa-chevron-down"></i></a></li>
+			                      	<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+			                    </ul>
+			                    <div class="clearfix"></div>
+			                </div>
+							<div class="x_content" id="validationDataInfoDiv" style="display:none;">
+								<div id="validationDataDefaultDiv">
+									<h5><strong>파일 기본 정보</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter">
+										<thead>
+											<tr>
+												<th>파일명</th>
+												<th>경로</th>
+												<th>생성시간</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td id="validationDataFileName"></td>
+												<td id="validationDataPath"></td>
+												<td id="validationDataCreateDateTime"></td>
+											</tr>
+											<tr>
+										</tbody>
+									</table>
+								</div>
+
+								<div id="validationDataSampleDiv" style="display:none;" class="scrollX">
+									<h5><strong>파일 샘플</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter" id="validationDataSampleTable">
+										
+									</table>
+								</div>
+								<div id="validationDataLabelDiv" style="display:none;">
+									<h5><strong>레이블 정보</strong></h5>
+									<div class="chartArea validationDataChartDiv">그래프 영역</div>
+								</div>
+							</div>
+						</div>
+						
+						<!-- 평가 데이터 -->
+						<div class="x_panel" id="evaluationDataLayerDiv">
+							<div class="x_title">
+			                    <h5><strong>평가 데이터</strong> </h5>
+			                    <ul class="nav navbar-right panel_toolbox">
+			                    	<li><a class="collapse-link"><i class="fa fa-chevron-down"></i></a></li>
+			                      	<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+			                    </ul>
+			                    <div class="clearfix"></div>
+			                </div>
+							<div class="x_content" id="evaluationDataInfoDiv" style="display:none;">
+								<div id="evaluationDataDefaultDiv">
+									<h5><strong>파일 기본 정보</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter">
+										<thead>
+											<tr>
+												<th>파일명</th>
+												<th>경로</th>
+												<th>생성시간</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td id="evaluationDataFileName"></td>
+												<td id="evaluationDataPath"></td>
+												<td id="evaluationDataCreateDateTime"></td>
+											</tr>
+											<tr>
+										</tbody>
+									</table>
+								</div><!-- //평가 데이터 정보 -->
+
+								<div id="evaluationDataSampleDiv" style="display:none;" class="scrollX">
+									<h5><strong>파일 샘플</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter" id="evaluationDataSampleTable">
+										
+									</table>
+								</div>
+								<div id="evaluationDataLabelDiv" style="display:none;">
+									<h5><strong>레이블 정보</strong></h5>
+									<div class="chartArea evaluationDataChartDiv">그래프 영역</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- 모델 정보 -->
+						<div class="x_panel" id="modelDetailDiv" style="display:none;">
+							<div class="x_title">
+			                    <h5><strong>모델 정보</strong> </h5>
+			                    <ul class="nav navbar-right panel_toolbox">
+			                    	<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+			                      	<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+			                    </ul>
+			                    <div class="clearfix"></div>
+			                </div>
+							<div class="x_content" id="evaluationDataDiv">
+								<div>
+									<h5><strong>알고리즘</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter" id="modelAlgorithmDataInfo">
+									</table>
+								</div>
+								
+								<div id="embeddingModelInfoDiv">
+									<h5><strong>임베딩 모델</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter">
+										<tbody>
+											<tr>
+												<th width="20%">프로젝트</th>
+												<td width="30%" id="embeddingProjectName">-</td>
+												<th width="20%">모델</th>
+												<td width="30%" id="embeddingModelName">-</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								
+								<div id="pretrainedModelInfoDiv">
+									<h5><strong>사전학습 모델</strong></h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter">
+										<tbody>
+											<tr>
+												<th width="20%">프로젝트</th>
+												<td width="30%" id="pretrainedModelProjectName">-</td>
+												<th width="20%">모델</th>
+												<td width="30%" id="pretrainedModelName">-</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								
+								<div>
+									<h5><strong>학습</strong>
+										<button type="button" class="btn btn-warning btn-sm custom-right" onclick="fnModelCommand('train','stop');" id="trainStopBtn">중지</button>
+			                    		<button type="button" class="btn btn-primary btn-sm custom-right" onclick="fnModelCommand('train','start');" id="trainStartBtn">학습</button>
+									</h5>
+									
+									<table class="table table-bordered jambo_table custom-tbTextCenter" id="trainDataTable">
+										<tbody>
+											<tr>
+												<th>상태</th>
+												<td colspan="3" id="trainState">
+													<div class='progress-bar progress-bar-striped active' role='progressbar' style='width:100%'>학습중</div>
+												</td>
+											</tr>
+											<tr>
+												<th rowspan="2">소요시간</th>
+												<th>시작시간</th>
+												<th>종료시간</th>
+												<th>소요시간</th>
+											</tr>
+											<tr>
+												<td id="trainStartDateTime">-</td>
+												<td id="trainEndDateTime">-</td>
+												<td id="trainRunTime">-</td>
+											</tr>
+											<tr>
+												<th rowspan="2">모델 파일 경로</th>
+												<th>파일명</th>
+												<th colspan="2">경로</th>
+											</tr>
+											<tr>
+												<td id="fileName">-</td>
+												<td colspan="2" id="path">-</td>
+											</tr>
+										</tbody>
+									</table>
+									<div id="trainLabelChartDiv" style="display:none;">
+										<!-- <div class="col-md-12" id="trainResultDiv">
+											<h4><strong>Loss</strong></h4>
+											<div class="chartArea trainChartDiv_0">그래프 영역</div>
+										</div> -->
+									</div>
+								</div>
+								
+								
+								<div id="evaluationInfoDiv">
+									<br/>
+									<h5><strong>평가</strong>
+										<button type="button" class="btn btn-warning btn-sm custom-right" onclick="fnModelCommand('evaluate','stop');" id="evaluationStopBtn">중지</button>
+										<button type="button" class="btn btn-primary btn-sm custom-right" onclick="fnModelCommand('evaluate','start');" id="evaluationStartBtn">평가</button>
+									</h5>
+									<table class="table table-bordered jambo_table custom-tbTextCenter" id="evaluationDataTable">
+										<tbody>
+											<tr>
+												<th>상태</th>
+												<td colspan="3" id="evaluationState">-</td>
+											</tr>
+											<tr>
+												<th rowspan="2">소요시간</th>
+												<th>시작시간</th>
+												<th>종료시간</th>
+												<th>소요시간</th>
+											</tr>
+											<tr>
+												<td id="evaluationStartDateTime">-</td>
+												<td id="evaluationEndDateTime">-</td>
+												<td id="evaluationRunTime">-</td>
+											</tr>
+										</tbody>
+									</table>
+									
+									<div id="evaluationLabelChartDiv" class="scrollX" style="display:none;">
+								<!-- 		<h5><strong>- classification report</strong></h5>
+										<table class="table table-bordered jambo_table custom-tbTextCenter">
+											<tbody>
+												<tr>
+													<th></th>
+													<th>f1-score</th>
+													<th>precision</th>
+													<th>recall</th>
+													<th>support</th>
+												</tr>
+												<tr>
+													<td id="">average</td>
+													<td id="">2</td>
+													<td id="">3</td>
+													<td id="">4</td>
+													<td id="">5</td>
+												</tr>
+											</tbody>
+										</table> -->
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- 모델 상세정보 -->
+
+					</div>
+				</div>
+			</div>
+		</div>	
+        <!-- /page content -->
+        
+<!-- ######################################################## modal ######################################################## -->
+        <div class="modal fade modelModal" tabindex="-1" role="dialog" aria-hidden="false"  >
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+					  <h4 class="modal-title" id=""><strong>모델 생성</strong></h4>
+					</div>
+					<div class="modal-body">
+						<div class="clearfix">
+							<div class="pull-left"><button type="button" class="btn btn-info" id="prevBtn"><i class="fa fa-angle-left"></i> Previous</button></div>
+							<div class="pull-right"><button type="button" class="btn btn-success" id="nextBtn" >Next <i class="fa fa-angle-right"></i></button></div>
+						</div>
+						<div class="pdTop_10" role="tabpanel" data-example-id="togglable-tabs">
+							<ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+								<li role="presentation" class="active"><a href="#tab_modelName" role="tab" id="modelName-tab" data-toggle="tab" aria-expanded="true">모델명 설정 *</a></li>
+								<li role="presentation" class=""><a href="#tab_algorithm" role="tab" id="algorithm-tab" data-toggle="tab" aria-expanded="false">알고리즘 선택 *</a></li>
+								<li role="presentation" class=""><a href="#tab_dataSet" role="tab" id="dataSet-tab" data-toggle="tab" aria-expanded="false">데이터셋 설정 *</a></li>
+								<li role="presentation" class=""><a href="#tab_model" role="tab" id="model-tab" data-toggle="tab" aria-expanded="false">모델 선택</a></li>
+						  </ul>
+						  <div class="tab-content">
+						    <!-- 모델명 설정 -->
+						  	<div role="tabpanel" class="tab-pane fade active in" id="tab_modelName" aria-labelledby="modelName-tab">
+								<div class="form-horizontal form-label-left">
+									<div class="form-group updateDiv">
+										<div class="col-md-4 col-sm-2 col-xs-12">
+											<label class="control-label  text-left">모델명</label>
+										</div>
+										<div class="col-md-8 col-sm-10 col-xs-12">
+											<input type="text" class="form-control" id="name">
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- //모델명 설정 -->
+							
+							<!-- 알고리즘 선택 -->
+							<div role="tabpanel" class="tab-pane fade" id="tab_algorithm" aria-labelledby="algorithm-tab">
+								<div class="form-horizontal form-label-left">
+									<div class="form-group">
+										<table id="datatable-algorithmList" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+				                            <thead>
+				                              <tr>
+				                              	<th></th>
+				                                <th>이름</th>
+				                                <th>설명</th>
+				                                <th>활용</th>
+				                                <th>적용</th>
+				                                <th></th>
+				                              </tr>
+				                            </thead>
+				
+				                            <tbody id="algorithmTbody" class="pointerCorsor">
+				                            </tbody>
+			                           </table>
+			                        </div>
+								</div>
+								<div id="algorithmParameterDiv" class="selectedDiv scrollX" style="display:none;">
+									<h5><strong>파라미터 설정</strong></h5>
+									<p class="ta_right bold">※ 파라미터값을 입력하지 않으면 기본값으로 적용됩니다.</p>
+									<div class="maxHeight_250 overY_scroll">
+										<table class="table table-bordered custom-tbTextCenter">
+											<colgroup>
+												<col width="">
+												<col width="">
+												<col width="200px">
+											</colgroup>
+											<thead>
+												<tr>
+													<th>파라미터 이름</th>
+													<th>타입</th>
+													<th>값</th>
+												</tr>
+											</thead>
+											<tbody id="algorithmParameters">
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<!-- 알고리즘 선택 -->
+							
+							<!-- 데이터셋 설정 -->
+							<div role="tabpanel" class="tab-pane fade" id="tab_dataSet" aria-labelledby="dataSet-tab">
+								<div class="pdTop_10" role="tabpanel" data-example-id="togglable-tabs">
+									<ul id="dataSetTab" class="nav nav-tabs bar_tabs" role="tablist">
+										<li role="presentation" class="active"><a href="#tab_trainData" role="tab" id="trainData-tab" data-toggle="tab" aria-expanded="true">학습 데이터 *</a></li>
+										<li role="presentation" class=""><a href="#tab_validationData" role="tab" id="validationData-tab" data-toggle="tab" aria-expanded="false">검증 데이터</a></li>
+										<li role="presentation" class=""><a href="#tab_evaluationData" role="tab" id="evaluationData-tab" data-toggle="tab" aria-expanded="false">평가 데이터</a></li>
+								  	</ul>
+								  	<div class="tab-content">
+								  		<!-- 학습 데이터 -->
+								  		<div role="tabpanel" class="tab-pane fade active in" id="tab_trainData" aria-labelledby="trainData-tab">
+											<div class="form-horizontal form-label-left">
+												<div class="form-group">
+													<table id="datatable-trainData" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+							                            <thead>
+							                              <tr>
+							                              	<th></th>
+							                                <th>파일명</th>
+							                                <th>전처리기</th>
+							                                <th>설명</th>
+							                                <th></th>
+							                              </tr>
+							                            </thead>
+							
+							                            <tbody id="trainDataTbody" class="pointerCorsor">
+							                            </tbody>
+						                           </table>
+						                        </div>
+											</div>
+											<div id="modalTrainDataSampleDiv" class="selectedDiv scrollX" style="display:none;">
+												<h5><strong>데이터 샘플</strong></h5>
+												<table class="table table-bordered jambo_table custom-tbTextCenter" id="modalTrainDataSampleTable">
+												</table>
+											</div>
+										</div>
+										<!-- 학습 데이터 -->
+										<!-- 검증 데이터 -->
+										<div role="tabpanel" class="tab-pane fade" id="tab_validationData" aria-labelledby="validationData-tab">
+											<div class="form-horizontal form-label-left">
+												<div class="form-group">
+													<table id="datatable-validationData" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+							                            <thead>
+							                              <tr>
+							                              	<th></th>
+							                                <th>파일명</th>
+							                                <th>전처리기</th>
+							                                <th>설명</th>
+							                                <th></th>
+							                              </tr>
+							                            </thead>
+							
+							                            <tbody id="validationDataTbody" class="pointerCorsor">
+							                            </tbody>
+						                           </table>
+						                        </div>
+											</div>
+											<div id="modalValidationDataSampleDiv" class="selectedDiv scrollX" style="display:none;">
+												<h5><strong>데이터 샘플</strong></h5>
+												<table class="table table-bordered jambo_table custom-tbTextCenter" id="modalValidationDataSampleTable">
+												</table>
+											</div>
+										</div>
+										<!-- 검증 데이터 -->
+										<!-- 평가 데이터 -->
+										<div role="tabpanel" class="tab-pane fade" id="tab_evaluationData" aria-labelledby="evaluationData-tab">
+											<div class="form-horizontal form-label-left">
+												<div class="form-group">
+													<table id="datatable-evaluationData" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+							                            <thead>
+							                              <tr>
+							                              	<th></th>
+							                                <th>파일명</th>
+							                                <th>전처리기</th>
+							                                <th>설명</th>
+							                                <th></th>
+							                              </tr>
+							                            </thead>
+							
+							                            <tbody id="evaluationDataTbody" class="pointerCorsor">
+							                            </tbody>
+						                           </table>
+						                        </div>
+											</div>
+											<div id="modalEvaluationDataSampleDiv" class="selectedDiv scrollX" style="display:none;">
+												<h5><strong>데이터 샘플</strong></h5>
+												<table class="table table-bordered jambo_table custom-tbTextCenter" id="modalEvaluationDataSampleTable">
+												</table>
+											</div>
+										</div>
+										<!-- 평가 데이터 -->
+								  	</div>
+								</div>
+							</div>
+							<!-- 데이터셋 설정 -->
+
+							<!-- 모델 선택 -->
+							<div role="tabpanel" class="tab-pane fade" id="tab_model" aria-labelledby="model-tab">
+								<div class="pdTop_10" role="tabpanel" data-example-id="togglable-tabs">
+									<ul id="modalTab" class="nav nav-tabs bar_tabs" role="tablist">
+										<li role="presentation" class="active"><a href="#tab_embeddingModel" role="tab" id="embeddingModel-tab" data-toggle="tab" aria-expanded="true">임베딩 모델</a></li>
+										<li role="presentation" class=""><a href="#tab_pretrainedModel" role="tab" id="pretrainedModel-tab" data-toggle="tab" aria-expanded="false">사전학습 모델</a></li>
+								  	</ul>
+								  	<div class="tab-content">
+								  		<!-- 임베딩 모델 -->
+								  		<div role="tabpanel" class="tab-pane fade active in" id="tab_embeddingModel" aria-labelledby="embeddingModel-tab">
+											<div class="form-horizontal form-label-left">
+												<h5><strong>프로젝트 선택</strong></h5>
+												<div class="form-group">
+													<table id="datatable-projectEmbeddingModel" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+							                            <thead>
+							                              <tr>
+							                              	<th></th>
+							                                <th>프로젝트명</th>
+							                                <th>설명</th>
+							                                <th>생성일시</th>
+							                              </tr>
+							                            </thead>
+							                            <tbody id="projectEmbeddingModelTbody" class="pointerCorsor">
+							                            </tbody>
+						                           </table>
+						                        </div>
+											</div>
+											<div id="modalEmbeddingModelDiv" class="selectedDiv">
+												<h5><strong>모델 선택</strong></h5>
+												<div class="form-group">
+													<table id="datatable-embeddingModel" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+														<colgroup>
+															<col width="">
+															<col width="">
+															<col width="200px">
+														</colgroup>
+														<thead>
+															<tr>
+																<th>SEQ</th>
+																<th>모델명</th>
+																<th>생성일시</th>
+															</tr>
+														</thead>
+														<tbody id="embeddingModelTbody" class="pointerCorsor">
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<!-- 임베딩 모델 -->
+										<!-- 사전학습 모델 -->
+										<div role="tabpanel" class="tab-pane fade" id="tab_pretrainedModel" aria-labelledby="pretrainedModel-tab">
+											<div class="form-horizontal form-label-left">
+												<h5><strong>프로젝트 선택</strong></h5>
+												<div class="form-group">
+													<table id="datatable-projectPretrainedModel" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+							                            <thead>
+							                              <tr>
+							                              	<th></th>
+							                                <th>프로젝트명</th>
+							                                <th>설명</th>
+							                                <th>생성일시</th>
+							                              </tr>
+							                            </thead>
+							
+							                            <tbody id="projectPretrainedModelTbody" class="pointerCorsor">
+							                            </tbody>
+						                           </table>
+						                        </div>
+											</div>
+											<div id="modalPretrainedModelDiv" class="selectedDiv">
+												<h5><strong>모델 선택</strong></h5>
+												<!-- <p class="ta_right bold">※ 파라미터값을 입력하지 않으면 기본값으로 적용됩니다.</p> -->
+												<div class="form-group">
+													<table id="datatable-pretrainedModel" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+														<colgroup>
+															<col width="">
+															<col width="">
+															<col width="200px">
+														</colgroup>
+														<thead>
+															<tr>
+																<th>SEQ</th>
+																<th>모델명</th>
+																<th>생성일시</th>
+															</tr>
+														</thead>
+														<tbody id="pretrainedModelTbody" class="pointerCorsor">
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<!-- 사전학습 모델 -->
+								  	</div>
+								 </div>
+								
+								<div class="ta_right topMargin">
+									<button type="button" class="btn btn-success" onclick="fnCreateModel();">생성</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								</div>
+							</div>
+							<!-- 모델 선택 -->
+
+
+						  </div><!-- //learningTab -->
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+<!-- ######################################################## modal ######################################################## -->
+        
+	</th:block>
+</body>
+</html>

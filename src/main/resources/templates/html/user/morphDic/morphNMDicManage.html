@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<script th:src="@{js/user/morphDic/morphNMDicManage.js}"></script>
+	
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h4><strong>신조어 사전 관리 </strong></h4>
+                    <div class="navbar-right">
+					  	<button type="button" class="btn btn-success" data-toggle="modal" data-target=".morphNMDicModal" onClick="fnInsertNmDicModal()">등록</button>
+					  	<button type="button" class="btn btn-default" onClick="fnDeleteNmDic()">삭제</button>
+				  	</div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                  	  <!--search_box-->
+	                  <div class="search_box">
+	                     <form class="form-inline">
+	                         <div class="form-group col-md-3">
+	                             <label class="control-label col-md-3 col-sm-3">항목</label>
+                                 <div class="col-md-8 col-sm-8 ">
+                                     <select class="form-control width_100p" id="searchColumn">
+                                         <option value="WORD">단어</option>
+                                         <option value="TAG">태그</option>
+                                         <option value="ADD_INFO1">추가정보 1</option>
+                                         <option value="ADD_INFO2">추가정보 2</option>
+                                     </select>
+                                 </div>
+	                         </div>
+	                         <div class="form-group col-md-3">
+	                             <label class="control-label col-md-3 col-sm-3">속성</label>
+                                 <div class="col-md-8 col-sm-8 ">
+                                     <select class="form-control width_100p" id="searchOption">
+                                         <option value="partialMatch">부분일치</option>
+                                         <option value="fullMatch">완전일치</option>
+                                         <option value="startMatch">시작일치</option>
+                                         <option value="endMatch">끝일치</option>
+                                         <option value="regularMatch">정규표현</option>
+                                     </select>
+                                 </div>
+	                         </div>
+	                         <div class="form-check col-md-6">
+	                             <label class="col-sm-3 col-form-label">검색어</label>
+	                             <div class="col-sm-9">
+	                                 <div class="input-group">
+	                                     <input type="text" class="form-control" id="sSearchValue">
+	                                     <span class="input-group-btn">
+	                                     	<button type="button" class="btn btn-primary borderRadius" onclick="fnSearchNmDicList('search')">검색</button>
+	                                     </span>
+	                                 </div>
+	                             </div>
+	                         </div>
+	                     </form>
+	                 </div>
+	                 <!-- // search_box-->
+                    <table id="nmDicTable" class="table table-striped jambo_table  table-bordered bulk_action custom-tbTextCenter">
+                      <thead>
+                        <tr>
+                          <th><input type="checkbox" id="check-all" class="flat"></th>
+                          <th>단어</th>
+                          <th>태그</th>
+                          <th>추가정보 1</th>
+                          <th>추가정보 2</th>
+                          <th>등록일시</th>
+                          <th>수정</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tbodyHtml">
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <!-- /page content -->
+        
+        <!-- modal -->
+      	<div class="modal fade morphNMDicModal" tabindex="-1" role="dialog" aria-hidden="false" >
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+					  <h4 class="modal-title">
+					  	<strong class="registDiv">신조어 등록</strong>
+					  	<strong class="updateDiv">신조어 수정</strong>
+					  </h4>
+					</div>
+					<div class="modal-body">
+						<form id="nmDicForm" class="form-horizontal form-label-left" data-parsley-validate>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">단어</label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="word" required>
+									<input type="hidden" class="form-control" id="nmSeq">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">태그</label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<select class="form-control" id="tag">
+										
+									</select>
+								</div>
+							</div><!-- // form-group -->
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">추가정보 1</label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="addInfo1">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">추가정보 2</label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="addInfo2" placeholder="정수를 입력해주세요." data-parsley-type="integer">
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success registDiv" onclick="fnInsertNmDic()">등록</button>
+						<button type="button" class="btn btn-success updateDiv" onclick="fnUpdateNmDic()">수정</button>
+					  	<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+					</div>
+				</div>
+			</div>
+		</div>
+        <!-- modal -->
+        
+	</th:block>
+</body>
+</html>

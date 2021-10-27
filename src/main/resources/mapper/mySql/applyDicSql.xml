@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.ApplyDicRestMapper">
+
+	<select id="getApplyDicList" resultType="monitDicApply">
+		SELECT * 
+		FROM TB_MONIT_DIC_APPLY 
+		ORDER BY ID
+	</select>
+	
+</mapper>

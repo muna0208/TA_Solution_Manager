@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="commonMenu">
+        <div class="menu_section active">
+			<ul class="nav side-menu commonMenuUl">
+				<li class="active preprocessorActive">
+					<a href="#" onclick="fnTaMoveMenu('/preprocessorManage')"><i class="fa fa-tasks"></i> 전처리기</a>
+				</li>
+				<li class="algorithmActive">
+					<a href="#" onclick="fnTaMoveMenu('/algorithmManage')"><i class="fa fa-cubes"></i> 알고리즘</a>
+				</li>
+				
+				<li class="dataManageActive">
+					<a><i class="fa fa-database"></i> 데이터 관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu dataManageDepth1">
+                      <li class="originalDataActive"><a href="#" onclick="fnTaMoveMenu('/originalDataManage')">원본 데이터</a></li>
+                      <li class="preprocessedDataActive"><a href="#" onclick="fnTaMoveMenu('/preprocessedDataManage')">전처리 데이터</a></li>
+                	</ul>
+				</li>
+				
+				<li class="projectManageActive">
+					<a href="#" onclick="fnTaMoveMenu('/projectManage')"><i class="fa fa-reorder"></i> 프로젝트 관리</a>
+				</li>
+				<li class="demonManageActive">
+					<a href="#" onclick="fnTaMoveMenu('/demonManage')"><i class="fa fa-cubes"></i> 데몬 관리</a>
+				</li>
+				<li class="batchManageActive">
+					<a href="#" onclick="fnTaMoveMenu('/batchManage')"><i class="fa fa-sitemap"></i> 배치 관리</a>
+				</li>
+				<li th:if="${session.userAuth.toString().equals('admin')}" class="morphActive">
+					<a><i class="fa fa-book"></i> 사전 관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu morphManageDepth1">
+						<li><a> 형태소 사전 관리 <span class="fa fa-chevron-down"></span></a>
+							<ul class="nav child_menu morphManageDepth2">
+								<li class="sub_menu morphNMDicManageActive"><a href="#" onclick="fnTaMoveMenu('/morphNMDicManage')">신조어 사전</a></li>
+			                    <li class="sub_menu morphEoj49DicManageActive"><a href="#" onclick="fnTaMoveMenu('/morphEoj49DicManage')">기분석 사전</a></li>
+			                    <li class="sub_menu morphCollocDicManageActive"><a href="#" onclick="fnTaMoveMenu('/morphCollocDicManage')">후처리 사전</a></li>
+			                    <li class="sub_menu morphStopWordDicManageActive"><a href="#" onclick="fnTaMoveMenu('/morphStopWordDicManage')">불용어 사전</a></li>
+							</ul>
+						</li>
+                      <li class="applyDicActive"><a href="#" onclick="fnTaMoveMenu('/applyDic')">지식 적용 현황</a></li>
+                      <li class="analyzeTestActive"><a href="#" onclick="fnTaMoveMenu('/analyzeTest')">분석 테스트</a></li>
+                	</ul>
+				</li>
+				<li th:if="${session.userAuth.toString().equals('admin')}" class="serverStateActive">
+					<a href="#" onclick="fnTaMoveMenu('/serverState')"><i class="fa fa-desktop"></i> 서버 구동 현황</a>
+				</li>
+				<li th:if="${session.userAuth.toString().equals('admin')}" class="userManageActive">
+					<a href="#" onclick="fnTaMoveMenu('/userManage')"><i class="fa fa-users"></i> 사용자 관리</a>
+				</li>
+			</ul>
+		</div>
+    </th:block>
+</html>

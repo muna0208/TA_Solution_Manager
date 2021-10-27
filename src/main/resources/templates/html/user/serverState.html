@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<script th:src="@{js/user/serverState.js}"></script>
+	
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h4><strong>서버 구동 현황 </strong></h4>
+                    <input type="hidden" id="checklinuxCommand" th:value="${checklinuxCommand}">
+                    <div class="navbar-right">
+                    	<button type="button" class="btn btn-info" onclick="fnRefreshServer();"><i class="fa fa-refresh"></i></button>
+					  	<button type="button" class="btn btn-success" data-toggle="modal" data-target=".serverStateModal" onclick="fnInsertModal();">등록</button>
+					  	<button type="button" class="btn btn-default" onClick="fnDeleteServer()">삭제</button>
+				  	</div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <table id="datatable-serverState" class="table table-striped jambo_table table-bordered bulk_action custom-tbTextCenter">
+                      <thead>
+                        <tr>
+                          <th><input type="checkbox" id="check-all" class="flat"></th>
+                          <th>서비스명</th>
+                          <th>아이피</th>
+                          <th>포트</th>
+                          <th>아이디</th>
+                          <th>상태</th>
+                          <th>CONTROL</th>
+                          <th>수정</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tbodyHtml">
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <!-- /page content -->
+        
+        <!-- modal -->
+      	<div class="modal fade serverStateModal" tabindex="-1" role="dialog" aria-hidden="false" >
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+					  <h4 class="modal-title">
+					  	<strong class="registDiv">서버 등록</strong>
+					  	<strong class="updateDiv">서버 수정</strong>
+					  </h4>
+					</div>
+					<div class="modal-body">
+						<form id="nmDicForm" class="form-horizontal form-label-left" data-parsley-validate>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">아이피 <span class="required">*</span></label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="ip" name="ip" 
+										data-parsley-required-message="값을 입력하세요.192.168.0.1과 같은 IP형태로 입력하세요." required>
+									<input type="hidden" class="form-control" id="serverSeq">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">포트 <span class="required">*</span></label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="port" name="port" 
+										data-parsley-required-message="값을 입력하세요.Port의 범위는 0~65,535 사이의 값이여야 합니다." required>
+								</div>
+							</div><!-- // form-group -->
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">서비스명 <span class="required">*</span></label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="serviceName" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">서버 접속 ID <span class="required">*</span></label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="connectId" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">프로그램 기본 위치 <span class="required">*</span></label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="modulePath" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">구동 명령어 <span class="required">*</span></label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="commandRun" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">종료 명령어 <span class="required">*</span></label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="commandKill" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">상태 체크 <span class="required">*</span></label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="commandState" required>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success registDiv" onclick="fnInsertServer()">등록</button>
+						<button type="button" class="btn btn-success updateDiv" onclick="fnUpdateServer()">수정</button>
+					  	<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+					</div>
+				</div>
+			</div>
+		</div>
+        <!-- modal -->
+        
+	</th:block>
+</body>
+</html>

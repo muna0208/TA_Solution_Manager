@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<script th:src="@{js/user/demonManage.js}"></script>
+	
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h4><strong>데몬 관리 </strong></h4>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="row">
+					  <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+						  <button type="button" class="btn btn-success" data-toggle="modal" data-target=".demonModal" onclick="fnInsertDemonModal()">등록</button>
+						  <button type="button" class="btn btn-default" onClick="fnDeleteDemon()">삭제</button>
+					  </div>
+				  </div>
+                  <div class="x_content">
+                  	<table id="datatable-demon" class="table table-striped jambo_table table-bordered bulk_action custom-tbTextCenter">
+						<thead>
+							<tr>
+								<th><input type="checkbox" id="check-all" class="flat"></th>
+								<th>이름</th>
+								<th>프로젝트</th>
+								<th>모델</th>
+								<th>등록자</th>
+								<th>등록일시</th>
+								<th>수정</th>
+							</tr>
+						</thead>
+						<tbody id="tbodyHtml">
+							
+						</tbody>
+					</table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>        	
+        <!-- /page content -->
+        
+        <!-- modal -->
+      	<div class="modal fade demonModal" tabindex="-1" role="dialog" aria-hidden="false" >
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+					  <h5 class="modal-title">
+					  	<strong class="registDiv">데몬 등록</strong>
+					  	<strong class="updateDiv">데몬 수정</strong>
+					  </h5>
+					</div>
+					<div class="modal-body">
+						<form id="demonForm" class="form-horizontal form-label-left" data-parsley-validate>
+							<div class="form-group">
+								<div class="col-md-4 col-sm-2 col-xs-12">
+									<label class="control-label  text-left">이름</label>
+								</div>
+								<div class="col-md-8 col-sm-10 col-xs-12">
+									<input type="text" class="form-control" id="name" required>
+									<input type="hidden" class="form-control" id="demonServiceSeq">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="form-horizontal form-label-left">
+									<h5><strong>프로젝트 선택</strong></h5>
+									<div class="form-group">
+										<table id="datatable-project" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+				                            <thead>
+				                              <tr>
+				                              	<th></th>
+				                                <th>프로젝트명</th>
+				                                <th>설명</th>
+				                                <th>생성일시</th>
+				                              </tr>
+				                            </thead>
+				                            <tbody id="projectTbody" class="pointerCorsor">
+				                            </tbody>
+			                           </table>
+			                        </div>
+								</div>
+								<div id="modelDiv">
+									<h5><strong>모델 선택</strong></h5>
+									<div class="form-group">
+										<table id="datatable-model" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+											<colgroup>
+												<col width="">
+												<col width="">
+												<col width="200px">
+											</colgroup>
+											<thead>
+												<tr>
+													<th>SEQ</th>
+													<th>모델명</th>
+													<th>생성일시</th>
+												</tr>
+											</thead>
+											<tbody id="modelTbody" class="pointerCorsor">
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success registDiv" onclick="fnSaveDemon('insert')">등록</button>
+						<button type="button" class="btn btn-success updateDiv" onclick="fnSaveDemon('update')">수정</button>
+					  	<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+					</div>
+				</div>
+			</div>
+		</div>
+        <!-- modal -->
+        
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.MorphDicRestMapper">
+
+
+	<select id="getCodeList" resultType="commonCode">
+		SELECT * FROM TB_COMN_CODE
+		WHERE GROUP_CODE = #{groupCode}
+		ORDER BY CODE_ORDER
+	</select>
+<!-- 신조어 사전 --><!-- 신조어 사전 --><!-- 신조어 사전 --><!-- 신조어 사전 --><!-- 신조어 사전 --><!-- 신조어 사전 --><!-- 신조어 사전 -->
+	<select id="getNmDicList" parameterType="searchData" resultType="dicMorphNm">
+		SELECT 
+			*
+			, (SELECT COMN_CODE_NAME FROM TB_COMN_CODE WHERE COMN_CODE = TAG) AS tagName
+			, ifnull(ADD_INFO1,'') AS addInfo1
+			, ifnull(ADD_INFO2,'') AS addInfo2
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_DIC_MORPH_NM
+		WHERE 1 = 1
+		<include refid="searchSql" />
+		LIMIT #{iDisplayStart},#{iDisplayLength}
+	</select>
+	
+	<select id="nMDicSearchTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_NM
+		WHERE 1 = 1
+		<include refid="searchSql" />
+	</select>
+	
+	<select id="nMDicTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_NM
+	</select>
+   
+	<select id="getNmDic" resultType="dicMorphNm">
+		SELECT
+			*
+			, (SELECT COMN_CODE_NAME FROM TB_COMN_CODE WHERE COMN_CODE = TAG) AS tagName
+			, ifnull(ADD_INFO1,'') AS addInfo1
+			, ifnull(ADD_INFO2,'') AS addInfo2
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_DIC_MORPH_NM
+		WHERE NM_SEQ = #{nmSeq}
+	</select>
+	
+	<select id="duplicateCheckNmDic" resultType="java.lang.Integer" parameterType="dicMorphNm">
+		SELECT
+		    count(*)
+		FROM TB_DIC_MORPH_NM 
+   		WHERE WORD = #{word}
+	</select>
+	
+	<insert id="insertNmDic" parameterType="dicMorphNm" useGeneratedKeys="true" keyProperty="nmSeq" keyColumn="NM_SEQ">
+		INSERT INTO TB_DIC_MORPH_NM(
+   			WORD
+   			, TAG
+   			, ADD_INFO1
+   			<if test='addInfo2 != null and addInfo2 != ""' >,ADD_INFO2</if>
+   			)
+		VALUES (
+        	 #{word}
+	          , #{tag}
+			  , #{addInfo1}
+			  <if test='addInfo2 != null and addInfo2 != ""' >, #{addInfo2}</if>
+       	)
+	</insert>
+	
+	<update id="updateNmDic" parameterType="dicMorphNm">
+		UPDATE TB_DIC_MORPH_NM
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='tag != null and tag != ""' >,TAG = #{tag}</if>
+				<if test='addInfo1 != null and addInfo1 != ""' >,ADD_INFO1 = #{addInfo1}</if>
+				<if test='addInfo2 != null and addInfo2 != ""' >,ADD_INFO2 = #{addInfo2}</if>
+			</trim>
+		WHERE NM_SEQ = #{nmSeq}
+	</update>
+	
+	<delete id="deleteNmDic">
+		DELETE FROM TB_DIC_MORPH_NM 
+		WHERE NM_SEQ = #{nmSeq}
+	</delete>
+	
+
+<!-- 복합명사 사전 --><!-- 복합명사 사전 --><!-- 복합명사 사전 --><!-- 복합명사 사전 --><!-- 복합명사 사전 --><!-- 복합명사 사전 -->
+	<select id="getCompDicList" resultType="java.util.HashMap" parameterType="searchData">
+		SELECT 
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_DIC_MORPH_COMP 
+		WHERE 1 = 1
+		<include refid="searchSql" />
+		LIMIT #{iDisplayStart},#{iDisplayLength}
+	</select>
+	
+	<select id="compDicSearchTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_COMP
+		WHERE 1 = 1
+		<include refid="searchSql" />
+	</select>
+	
+	<select id="compDicTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_COMP
+	</select>
+   
+	<select id="getCompDic" resultType="java.util.HashMap">
+		SELECT
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_DIC_MORPH_COMP
+		WHERE COMP_SEQ = #{compSeq}
+	</select>
+	
+	<select id="duplicateCheckCompDic" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+		SELECT
+		    count(*)
+		FROM TB_DIC_MORPH_COMP 
+   		WHERE WORD = #{word}
+	</select>
+	
+	<insert id="insertCompDic" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="compSeq" keyColumn="COMP_SEQ">
+		INSERT INTO TB_DIC_MORPH_COMP(
+   			WORD
+   			)
+		VALUES (
+        	 #{word}
+       	)
+	</insert>
+	
+	<update id="updateCompDic" parameterType="java.util.HashMap">
+		UPDATE TB_DIC_MORPH_COMP
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='word != null and word != ""' >,WORD = #{word}</if>
+			</trim>
+		WHERE COMP_SEQ = #{compSeq}
+	</update>
+	
+	<delete id="deleteCompDic">
+		DELETE FROM TB_DIC_MORPH_COMP 
+		WHERE COMP_SEQ = #{compSeq}
+	</delete>
+	
+	
+<!-- 기분석 사전 --><!-- 기분석 사전 --><!-- 기분석 사전 --><!-- 기분석 사전 --><!-- 기분석 사전 --><!-- 기분석 사전 --><!-- 기분석 사전 -->
+	<select id="getEoj49DicList" resultType="dicMorphEoj49" parameterType="searchData">
+		SELECT 
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_DIC_MORPH_EOJ49 
+		WHERE 1 = 1
+		<include refid="searchSql" />
+		LIMIT #{iDisplayStart},#{iDisplayLength}
+	</select>
+	
+	<select id="eoj49DicSearchTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_EOJ49
+		WHERE 1 = 1
+		<include refid="searchSql" />
+	</select>
+	
+	<select id="eoj49DicTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_EOJ49
+	</select>
+   
+	<select id="getEoj49Dic" resultType="dicMorphEoj49">
+		SELECT
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_DIC_MORPH_EOJ49
+		WHERE EOJ49_SEQ = #{eoj49Seq}
+	</select>
+	
+	<select id="duplicateCheckEoj49Dic" resultType="java.lang.Integer" parameterType="dicMorphEoj49">
+		SELECT
+		    count(*)
+		FROM TB_DIC_MORPH_EOJ49 
+   		WHERE EOJEOL = #{eojeol}
+	</select>
+	
+	<insert id="insertEoj49Dic" parameterType="dicMorphEoj49" useGeneratedKeys="true" keyProperty="eoj49Seq" keyColumn="EOJ49_SEQ">
+		INSERT INTO TB_DIC_MORPH_EOJ49(
+   			EOJEOL
+   			,RESULT
+   			,FREQ
+   			)
+		VALUES (
+        	 #{eojeol}
+        	 ,#{result}
+        	 ,#{freq}
+       	)
+	</insert>
+	
+	<update id="updateEoj49Dic" parameterType="dicMorphEoj49">
+		UPDATE TB_DIC_MORPH_EOJ49
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='result != null and result != ""' >,RESULT = #{result}</if>
+				<if test='freq != null and freq != ""' >,FREQ = #{freq}</if>
+			</trim>
+		WHERE EOJ49_SEQ = #{eoj49Seq}
+	</update>
+	
+	<delete id="deleteEoj49Dic">
+		DELETE FROM TB_DIC_MORPH_EOJ49 
+		WHERE EOJ49_SEQ = #{eoj49Seq}
+	</delete>
+
+<!-- 후처리 사전 --><!-- 후처리 사전 --><!-- 후처리 사전 --><!-- 후처리 사전 --><!-- 후처리 사전 --><!-- 후처리 사전 --><!-- 후처리 사전 -->
+	<select id="getCollocDicList" resultType="dicMorphColloc" parameterType="searchData">
+		SELECT 
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_DIC_MORPH_COLLOC 
+		WHERE 1 = 1
+		<include refid="searchSql" />
+		LIMIT #{iDisplayStart},#{iDisplayLength}
+	</select>
+	
+	<select id="collocDicSearchTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_COLLOC
+		WHERE 1 = 1
+		<include refid="searchSql" />
+	</select>
+	
+	<select id="collocDicTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_COLLOC
+	</select>
+   
+	<select id="getCollocDic" resultType="dicMorphColloc">
+		SELECT
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_DIC_MORPH_COLLOC
+		WHERE COLLOC_SEQ = #{collocSeq}
+	</select>
+	
+	<select id="duplicateCheckCollocDic" resultType="java.lang.Integer" parameterType="dicMorphColloc">
+		SELECT
+		    count(*)
+		FROM TB_DIC_MORPH_COLLOC 
+   		WHERE INPUT = #{input}
+	</select>
+	
+	<insert id="insertCollocDic" parameterType="dicMorphColloc" useGeneratedKeys="true" keyProperty="collocSeq" keyColumn="COLLOC_SEQ">
+		INSERT INTO TB_DIC_MORPH_COLLOC(
+   			INPUT
+   			,RESULT
+   			,IS_COMBINE
+   			,NER_TAG
+   			)
+		VALUES (
+        	 #{input}
+        	 ,#{result}
+        	 ,#{isCombine}
+        	 ,#{nerTag}
+       	)
+	</insert>
+	
+	<update id="updateCollocDic" parameterType="dicMorphColloc">
+		UPDATE TB_DIC_MORPH_COLLOC
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='result != null and result != ""' >,RESULT = #{result}</if>
+				<if test='isCombine != null and isCombine != ""' >,IS_COMBINE = #{isCombine}</if>
+				<if test='nerTag != null and nerTag != ""' >,NER_TAG = #{nerTag}</if>
+			</trim>
+		WHERE COLLOC_SEQ = #{collocSeq}
+	</update>
+
+	<delete id="deleteCollocDic">
+		DELETE FROM TB_DIC_MORPH_COLLOC 
+		WHERE COLLOC_SEQ = #{collocSeq}
+	</delete>
+
+<!-- 불용어 사전 --><!-- 불용어 사전 --><!-- 불용어 사전 --><!-- 불용어 사전 --><!-- 불용어 사전 --><!-- 불용어 사전 --><!-- 불용어 사전 -->
+	<select id="getStopWordDicList" resultType="dicMorphStopword" parameterType="searchData">
+		SELECT 
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_DIC_MORPH_STOPWORD 
+		WHERE 1 = 1
+		<include refid="searchSql" />
+		LIMIT #{iDisplayStart},#{iDisplayLength}
+	</select>
+	
+	<select id="stopWordDicSearchTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_STOPWORD
+		WHERE 1 = 1
+		<include refid="searchSql" />
+	</select>
+	
+	<select id="stopWordDicTotalCount" parameterType="searchData" resultType="java.lang.Integer">
+		SELECT 
+			count(*)
+		FROM TB_DIC_MORPH_STOPWORD
+	</select>
+   
+	<select id="getStopWordDic" resultType="dicMorphStopword">
+		SELECT
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_DIC_MORPH_STOPWORD
+		WHERE STOPWORD_SEQ = #{stopwordSeq}
+	</select>
+	
+	<select id="duplicateCheckStopWordDic" resultType="java.lang.Integer" parameterType="dicMorphStopword">
+		SELECT
+		    count(*)
+		FROM TB_DIC_MORPH_STOPWORD 
+   		WHERE WORD = #{word}
+	</select>
+	
+	<insert id="insertStopWordDic" parameterType="dicMorphStopword" useGeneratedKeys="true" keyProperty="stopwordSeq" keyColumn="STOPWORD_SEQ">
+		INSERT INTO TB_DIC_MORPH_STOPWORD(
+   			WORD
+   			)
+		VALUES (
+        	 #{word}
+       	)
+	</insert>
+	
+	<update id="updateStopWordDic" parameterType="dicMorphStopword">
+		UPDATE TB_DIC_MORPH_STOPWORD
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='word != null and word != ""' >,WORD = #{word}</if>
+			</trim>
+		WHERE STOPWORD_SEQ = #{stopwordSeq}
+	</update>
+	
+	<delete id="deleteStopWordDic">
+		DELETE FROM TB_DIC_MORPH_STOPWORD 
+		WHERE STOPWORD_SEQ = #{stopwordSeq}
+	</delete>
+	
+	<sql id="searchSql">
+		<if test='sSearch != null and sSearch != ""' >
+			<choose>
+				<when test="searchOption == 'fullMatch'">AND ${searchColumn} LIKE #{sSearch}</when>
+				<when test="searchOption == 'startMatch'">AND ${searchColumn} LIKE concat(#{sSearch}, '%')</when>
+				<when test="searchOption == 'endMatch'">AND ${searchColumn} LIKE concat('%', #{sSearch})</when>
+				<when test="searchOption == 'regularMatch'">AND ${searchColumn} REGEXP concat('%', #{sSearch}, '%')</when>
+				<otherwise>AND ${searchColumn} LIKE concat('%', #{sSearch}, '%')</otherwise>
+			</choose>
+		</if>
+		<if test='sSortCol != null and sSortCol != ""' >
+             ORDER BY ${sSortCol}
+        </if>
+        <if test='sSortCol != null and sSortDir_0 != ""' >
+             ${sSortDir_0}
+        </if>
+	</sql>
+	
+</mapper>

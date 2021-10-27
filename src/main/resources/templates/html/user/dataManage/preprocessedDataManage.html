@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<script th:src="@{js/user/dataManage/preprocessedDataManage.js}"></script>
+	
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h4><strong>전처리 데이터 관리 </strong></h4>
+					<div class="navbar-right">
+						  <button type="button" class="btn btn-success" data-toggle="modal" data-target=".addPreprocessedDataModal" onClick="fnPreprocessedDataModal()">데이터 전처리</button>
+						  <button type="button" class="btn btn-default" onClick="fnDeletePreprocessedData()">삭제</button>
+					  </div>                    
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                  	<table id="datatable-preprocessedDataList" class="table table-striped jambo_table table-bordered bulk_action custom-tbTextCenter">
+						<thead>
+							<tr>
+								<th><input type="checkbox" id="check-all" class="flat"></th>
+								<th>파일명</th>
+								<th>전처리기</th>								
+								<th>설명</th>
+								<th>상태</th>
+								<th th:if="${session.userAuth} == 'admin'">등록자</th>
+								<th>등록일</th>
+							</tr>
+						</thead>
+						<tbody id="tbodyHtml">
+							
+						</tbody>
+					</table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>         	        	
+        <!-- /page content -->
+        
+        <!-- modal -->
+        <div class="modal fade addPreprocessedDataModal" tabindex="-1" role="dialog" aria-hidden="false"  >
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+					  <h4 class="modal-title" id=""><strong>전처리 데이터 생성</strong></h4>
+					</div>
+					<div class="modal-body">
+						<div class="clearfix">
+							<div class="pull-left"><button type="button" class="btn btn-info" id="prevBtn"><i class="fa fa-angle-left"></i> Previous</button></div>
+							<div class="pull-right"><button type="button" class="btn btn-success" id="nextBtn" >Next <i class="fa fa-angle-right"></i></button></div>
+						</div>
+						<div class="pdTop_10" role="tabpanel" data-example-id="togglable-tabs">
+							<ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+								<li role="presentation" class="active"><a href="#tab_default" role="tab" id="default-tab" data-toggle="tab" aria-expanded="true">기본 설정</a></li>
+								<li role="presentation" class=""><a href="#tab_originalData" role="tab" id="originalData-tab" data-toggle="tab" aria-expanded="false">원본데이터 선택</a></li>
+								<li role="presentation" class=""><a href="#tab_preprocessor" role="tab" id="preprocessor-tab" data-toggle="tab" aria-expanded="false">전처리기 선택</a></li>
+						  </ul>
+						  <div id="learningTab" class="tab-content">
+							<div role="tabpanel" class="tab-pane fade active in" id="tab_default" aria-labelledby="default-tab">
+								<div class="form-horizontal form-label-left">
+									<div class="form-group updateDiv">
+										<div class="col-md-4 col-sm-2 col-xs-12">
+											<label class="control-label  text-left">전처리 데이터명</label>
+										</div>
+										<div class="col-md-8 col-sm-10 col-xs-12">
+											<input type="text" class="form-control" id="name">
+											<input type="hidden" class="form-control" id="preprocessedDataSeq">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-md-4 col-sm-2 col-xs-12">
+											<label class="control-label  text-left">설명</label>
+										</div>
+										<div class="col-md-8 col-sm-10 col-xs-12">
+											<textarea class="form-control" rows="4" id="description" name="description"></textarea>
+										</div>
+									</div>
+								</div>
+							</div><!-- //tab_algorithm -->
+							<div role="tabpanel" class="tab-pane fade" id="tab_originalData" aria-labelledby="originalData-tab">
+								<div class="form-horizontal form-label-left">
+									<div class="form-group">
+										<table id="datatable-originalDataList" class="table table-striped jambo_table  table-bordered custom-tbTextCenter" style="width:100%;">
+				                            <thead>
+				                              <tr>
+				                              	<th></th>
+				                                <th>파일명</th>
+				                                <th>설명</th>
+				                                <th>용량</th>
+				                              </tr>
+				                            </thead>
+				
+				                            <tbody id="originalDataTbody" class="pointerCorsor">
+				                            </tbody>
+			                           </table>
+			                        </div>
+								</div>
+							</div><!-- //tab_originalData -->
+							<div role="tabpanel" class="tab-pane fade" id="tab_preprocessor" aria-labelledby="preprocessor-tab">
+								<div class="form-horizontal form-label-left">
+									<div class="form-group">
+										<table id="datatable-preprocessorList" class="table table-striped jambo_table table-bordered custom-tbTextCenter" style="width:100%;">
+				                            <thead>
+				                              <tr>
+				                              	<th></th>
+				                                <th>전처리기</th>
+				                                <th>사용범위</th>
+				                                <th>적용</th>
+				                                <th></th>
+				                              </tr>
+				                            </thead>
+				
+				                            <tbody id="preprocessorTbody" class="pointerCorsor">
+				                            </tbody>
+			                           </table>
+			                        </div>
+								</div>
+								<div id="preprocessorParameterDiv">
+									<h5><strong>파라미터 설정</strong></h5>
+									<p class="ta_right bold">※ 파라미터값을 입력하지 않으면 기본값으로 적용됩니다.</p>
+									<div class="maxHeight_250 overY_scroll">
+										<table class="table table-bordered custom-tbTextCenter">
+											<colgroup>
+												<col width="">
+												<col width="">
+												<col width="200px">
+											</colgroup>
+											<thead>
+												<tr>
+													<th>파라미터 이름</th>
+													<th>타입</th>
+													<th>값</th>
+												</tr>
+											</thead>
+											<tbody id="parameters">
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="ta_right topMargin">
+									<button type="button" class="btn btn-success" onclick="fnCreatePreprocessedData();">생성</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								</div>
+							</div><!-- //tab_preprocessor -->
+
+
+						  </div><!-- //learningTab -->
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+
+        <!-- modal -->
+        
+	</th:block>
+</body>
+</html>

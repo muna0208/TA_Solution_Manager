@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<!-- amchart Resources -->
+	<script th:src="@{js/lib/amchart/core.js}"></script>
+	<script th:src="@{js/lib/amchart/charts.js}"></script>
+	<script th:src="@{js/lib/amchart/animated.js}"></script>
+	
+	<script th:src="@{js/user/dataManage/preprocessedDataDetail.js}"></script>
+	
+        <!-- page content -->
+		<div>
+			<div class="right_col" role="main" id="myContentsWrap">
+			<input type="hidden" id="preprocessedDataSeq" th:value="${preprocessedDataSeq}" />
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title">
+								<h4 class="pdTop_15"><strong id="preprocessedDataName"></strong>   <small id="description"></small></h4>
+								<ul class="nav navbar-right panel_toolbox">
+									<div class="text-right">
+										<button type="button" class="btn btn-primary btn-sm" onclick="fnChangePreprocessedData('start');" id="startBtn" style="display:none;">시작</button>
+										<button type="button" class="btn btn-warning btn-sm" onclick="fnChangePreprocessedData('stop');" id="stopBtn" style="display:none;">중지</button>
+										<button type="button" class="btn btn-default btn-sm" onclick="fnDeletePreprocessedData();">삭제</button>
+										<button type="button" class="btn btn-info btn-sm" onclick="fnComnGetMovePage('preprocessedDataManage');">목록</button>
+									</div>
+									<div class="pdTB_10" id="createDataTime"></div>
+								</ul> 
+								<div class="clearfix"></div>
+							</div><!-- //x_title -->
+						</div>
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col-md-3 col-sm-4 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title"><strong>원본 데이터</strong></div>
+							<div class="x_content">
+								<div class="projList">
+									<h2 class="custom-title" id="originalDataName"></h2>
+								</div>
+							</div>
+						</div>
+						<div class="x_panel">
+							<div class="x_title"><strong>전처리기</strong></div>
+							<div class="x_content">
+								<div class="projList">
+									<h2 class="custom-title" id="preprocessorName"></h2>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-9 col-sm-8 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title">
+			                    <h4><strong>전처리기 정보</strong> </h4>
+			                    <ul class="nav navbar-right panel_toolbox">
+			                    	<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+			                      	<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+			                    </ul>
+			                    <div class="clearfix"></div>
+			                </div>
+							<div class="x_content">
+								<div class="clearfix row">
+									<div class="col-md-12 col-sm-6 col-xs-12">
+										<table class="table table-bordered custom-tbTextCenter" id="preprocessedDataInfo">
+										</table>
+									</div>
+								</div>
+							</div>
+						</div><!-- //x_panel : 전처리기 정보-->
+
+						<!-- 전처리 상세정보 -->
+						<div class="x_panel" id="preprocessedDataDetailDiv" style="display:none;">
+							<div class="x_title">
+			                    <h4><strong>전처리 데이터 상세정보</strong> </h4>
+			                    <ul class="nav navbar-right panel_toolbox">
+			                    	<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+			                      	<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+			                    </ul>
+			                    <div class="clearfix"></div>
+			                </div>
+							<div class="x_content">
+								<div>
+									<h4><strong>파일 기본 정보</strong></h4>
+									<table class="table table-bordered jambo_table custom-tbTextCenter">
+										<thead>
+											<tr>
+												<th>파일명</th>
+												<th>경로</th>
+												<th>생성시간</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td id="fileName"></td>
+												<td id="path"></td>
+												<td id="createDateTime"></td>
+											</tr>
+											<tr>
+										</tbody>
+									</table>
+									<table class="table table-bordered jambo_table custom-tbTextCenter">
+										<thead>
+											<tr>
+												<th>컬럼정보</th>
+												<th>클래스</th>
+												<th>데이터수</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td id="columns"></td>
+												<td id="class"></td>
+												<td id="amount"></td>
+											</tr>
+											<tr>
+										</tbody>
+									</table>
+									<table class="table table-bordered jambo_table custom-tbTextCenter">
+										<thead>
+											<tr>
+												<th>상태</th>
+												<th>시작시간</th>
+												<th>종료시간</th>
+												<th>소요시간</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td id="state"></td>
+												<td id="startDatetime"></td>
+												<td id="endDatetime"></td>
+												<td id="period"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div><!-- //전처리 셋 정보 -->
+
+								<div id="sampleDiv" style="display:none;overflow-x:scroll">
+									<h4><strong>파일 샘플</strong></h4>
+									<table class="table table-bordered jambo_table custom-tbTextCenter" id="sampleTable">
+										
+									</table>
+								</div><!-- //전처리 프로세스 -->
+								<div id="labelChartDiv" style="display:none;">
+									<h4><strong>레이블 정보</strong></h4>
+									<div class="chartArea preprocessedDataChartDiv">그래프 영역</div>
+								</div><!-- //그래프 영역 -->
+							</div>
+						</div>
+						<!-- 전처리 상세정보 -->
+
+					</div>
+				</div>
+			</div>
+		</div>
+        <!-- /page content -->
+        
+	</th:block>
+</body>
+</html>

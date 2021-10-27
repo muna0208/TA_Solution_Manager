@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <th:block th:fragment="commonMenu">
+        <!-- top navigation -->
+	        <div class="top_nav">
+	          <div class="nav_menu">
+	            <nav>
+	              <div class="nav toggle">
+	                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+	              </div>
+	
+	              <ul class="nav navbar-nav navbar-right">
+	                <li class="">
+	                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+	                    <!-- <img src="images/img.jpg" alt=""> -->
+	                    <span th:text="${session.userName}"></span>
+	                    
+	                    <input type="hidden" id="id" th:value="${session.id}" />
+	                    <input type="hidden" id="userId" th:value="${session.userId}" />
+	                    <input type="hidden" id="userAuth" th:value="${session.userAuth}" />
+	                    
+	                    <span class=" fa fa-angle-down"></span>
+	                  </a>
+	                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+	                    	<li><a href="javascript:fnTaShowProfile();"> Profile</a></li>
+	                    	<li><a href="/logout"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+	                  </ul>
+	                </li>
+	                <li role="presentation">
+	                  <a th:href="${session.dataanalyticsManagerUrl}" class="dropdown-toggle info-number" title="데이터분석 시스템">
+	                    <i class="fa fa-cubes" style="font-size:20px"></i>
+	                    <!-- <span class="badge bg-green">6</span> -->
+	                  </a>
+	                </li>
+	                
+	              </ul>
+	            </nav>
+	          </div>
+	        </div>
+	        <!-- /top navigation -->
+	        
+	    <!-- modal -->
+        <div class="modal fade profileModal" id="profileModal" tabindex="-1" role="dialog" aria-hidden="false">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+					  </button>
+					  <h2 class="modal-title" id="myModalLabel"><strong>Profile</strong></h2>
+					</div>
+					<div class="modal-body">
+						<form id="profileForm" class="form-horizontal form-label-left" data-parsley-validate>
+							<div class="modal-body">
+								<div class="item form-group">
+									<label class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">아이디 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="text" class="form-control" placeholder="ID" id="p_userId" name="p_userId" th:value="${session.userId}" required data-parsley-type="alphanum" readonly>
+									  <input type="hidden" id="p_Id" th:value="${session.id}">
+									</div>
+								</div>
+								<div class="item form-group">
+									<label class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">이름 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="text" class="form-control" id="p_userName" name="p_userName" th:value="${session.userName}" required>
+									</div>
+								</div>
+								<div class="item form-group">
+									<label class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">이메일 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="email" class="form-control" placeholder="abc@daumsoft.com" id="p_email" name="p_email" th:value="${session.userEmail}" required>
+									</div>
+								</div>
+								<div class="item form-group">
+									<label for="password" class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">비밀번호 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="password" class="form-control" placeholder="6~12자리 입력해주세요." id="p_password" name="p_password" value="wjdgusakstp" data-parsley-length="[6, 12]" required>
+									</div>
+								</div>
+								<div class="item form-group">
+									<label for="confirmPassword" class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">비밀번호 확인 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="password" class="form-control" placeholder="6~12자리 입력해주세요." id="p_confirmPassword" name="p_confirmPassword" value="wjdgusakstp" data-parsley-equalto="#p_password" required>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" onclick="fnTaSaveProfile()">수정</button>
+					  	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+        <!-- modal -->
+    </th:block>
+</html>

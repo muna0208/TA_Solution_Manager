@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<script th:src="@{js/user/analyzeTest.js}"></script>
+	
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h4><strong>분석 테스트 </strong></h4>
+                    <div class="navbar-right">
+                    	<button type="submit" class="btn btn-primary" onclick="fnAnalyzeTest();">분석</button>
+                    </div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+					<form id="analyzeTestForm" data-parsley-validate class="form-horizontal form-label-left">
+                      <div class="form-group">
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">Server IP <span class="required">*</span></label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="serverIp" required="required" th:value="${trendmapServerIp}" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">MA Port <span class="required">*</span></label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="maPort" required="required" th:value="${trendmapMaPort}" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">TM Port <span class="required">*</span></label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="tmPort" required="required" th:value="${trendmapTmPort}" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="last-name">Body <span class="required">*</span>
+                        </label>
+                        <div class="col-md-11 col-sm-6 col-xs-12">
+                        	<textarea class="form-control" id="body" required="required" rows="5"></textarea>
+                        </div>
+                      </div>
+                    </form>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row" id="analyzeResult" style="display:none;">
+              <div class="col-md-4 col-xs-12">
+                <div class="x_panel">
+                	<div class="x_title">
+	                    <h5><strong>형태소 분석</strong></h5>
+	                    <ul class="nav navbar-right panel_toolbox">
+	                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                      </li>
+	                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+	                      </li>
+	                    </ul>
+	                    <div class="clearfix"></div>
+	                </div>
+	                <div class="x_content">
+	                    <br />
+	                    <form class="form-horizontal form-label-left input_mask">
+	                      <textarea rows="10" class="form-control" id="morthAnalysis1" readonly></textarea>
+	                      <br />	                      
+	                      <textarea rows="10" class="form-control" id="morthAnalysis2" readonly>
+; 0,0 문장
+- 인식된 한 문장 단위가 위의 형태로 나타나며
+- ,을 기준으로 앞은 문단 번호 뒤는 문장 번호를 의미
+
+0 o/x 어절 분석결과
+- o/x: known word / unknown word
+- 공백으로 분리된 순서대로 어절번호/어절/분석결과
+	                      </textarea>
+	                    </form>
+	                 </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-xs-12">
+                <div class="x_panel">
+                	<div class="x_title">
+	                    <h5><strong>키워드 리스트</strong></h5>
+	                    <ul class="nav navbar-right panel_toolbox">
+	                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                      </li>
+	                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+	                      </li>
+	                    </ul>
+	                    <div class="clearfix"></div>
+	                </div>
+	                <div class="x_content">
+	                    <br />
+	                    <form class="form-horizontal form-label-left input_mask">
+	                      <textarea rows="10" class="form-control" id="keywordList1" readonly></textarea>
+	                      <br />	                      
+	                      <textarea rows="10" class="form-control" id="keywordList2" readonly>
+추출된 키워드 리스트
+
+Title: 문서의 제목, Body: 문서의 본문
+
+1은 제목에서 나타난 키워드, 4는 본문에서 나타난 키워드
+
+Body는 항상 내용이 포함되어야 함
+
+* 그룹키워드 및 동의어 분석은 서버의 설정에 따라 다르게 나타납니다
+	                      </textarea>
+	                    </form>
+	                 </div>
+                </div>
+              </div>
+              <div class="col-md-4 col-xs-12">
+                <div class="x_panel">
+                	<div class="x_title">
+                		<h5><strong>연관 키워드</strong></h5>
+	                    <ul class="nav navbar-right panel_toolbox">
+	                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                      </li>
+	                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+	                      </li>
+	                    </ul>
+	                    <div class="clearfix"></div>
+	                </div>
+	                <div class="x_content">
+	                    <br />
+	                    <form class="form-horizontal form-label-left input_mask">
+	                      <textarea rows="10" class="form-control" id="associatedKeyword1" readonly></textarea>
+	                      <br />	                      
+	                      <textarea rows="10" class="form-control" id="associatedKeyword2" readonly>
+키워드와 연관어 쌍의 리스트
+
+#@DU#의 연관어는 주제어로 선정된 키워드
+	                      </textarea>
+	                    </form>
+	                 </div>
+                </div>
+              </div>
+            </div>               
+                
+            
+          </div>
+        </div>
+        <!-- /page content -->
+        
+        <!-- modal -->
+        <!-- modal -->
+        
+	</th:block>
+</body>
+</html>

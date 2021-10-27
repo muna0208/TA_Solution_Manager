@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.AlgorithmRestMapper">
+
+   <select id="getAlgorithmList" resultType="algorithm">
+		SELECT * from TB_ALGORITHM
+		WHERE USE_FLAG = 1
+   </select>
+
+	<select id="getAlgorithm" resultType="algorithm">
+		SELECT * from TB_ALGORITHM where ALGORITHM_SEQ = #{algorithmSeq}
+   </select>
+
+</mapper>

@@ -1,0 +1,119 @@
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+  thymeleaf:
+    prefix: classpath:templates/html/
+    check-template-location: true
+    suffix: .html
+    mode: HTML5
+    cache: false
+    
+  datasource:
+    hikari:
+      customer:
+       driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+       jdbc-url: jdbc:log4jdbc:mysql://10.1.22.2:3306/tasolver_db?serverTimezone=UTC&characterEncoding=utf-8
+       username: solver
+       password: solver@2020
+       connection-test-query: SELECT 1
+      
+#      *** Redis Session clustering **** 
+#      user:
+#       driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+#       jdbc-url: jdbc:log4jdbc:postgresql://10.1.22.2:5432/DATA_ANALYTICS_SYSTEM?useUnicode=true&characterEncoding=utf-8
+#       username: smartcity
+#       password: smartcity
+#       connection-test-query: SELECT 1
+
+  main:
+    allow-bean-definition-overriding: true
+    
+# spring-boot-devtool
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+      
+# file upload setting
+  servlet:
+    multipart:
+      max-file-size: 10GB
+      max-request-size: 10GB
+      location: ${java.io.tmpdir}
+      file-size-threshold: 1GB
+      enabled: true
+      
+# session clustering setting      
+  redis:
+    host: 10.1.22.2
+    port: 6379
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  tomcat:
+    uri-encoding: UTF-8
+  port: 2020
+  servlet:
+    session:
+      timeout: 60m
+
+# 모듈 정보
+module:
+  url: http://10.1.1.61:2021
+  version: v1.0
+  method:
+    preprocessedData: preprocessed-data
+    model: model
+    demon: predict
+
+# 파일 경로
+userFilePath: C:\dev\sts-4.4.0.RELEASE\files\\user_files
+originalFilePath: C:\dev\sts-4.4.0.RELEASE\files\\original_files
+preprocessedDataFilePath: C:\dev\sts-4.4.0.RELEASE\files\\preprocessedData_files
+modelFilePath: C:\dev\sts-4.4.0.RELEASE\files\\model_files
+
+# 지식적용 관련
+trendmap:
+  path: /home/tasolver/Trendmap2/
+  jdbc: jdbc:mysql://10.1.22.2:3306/tasolver_db?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&serverTimezone=UTC
+  dbUser: solver
+  dbPw: solver@2020
+  serverIp: 127.0.0.1
+  maPort: 5003
+  tmPort: 5004
+
+# 서버 구동현황 관련 ssh 경로
+ssh:
+  rsakey: /home/tasolver/.ssh/id_rsa
+
+# ssh 금지 명령어
+checklinuxCommand: rm ,/dev/sda,mv ,cp ,wget ,ssh ,
+  
+# 데이터분석시스템과 User 통합여부
+isIntegration: true
+
+# 데이터분석시스템 URL
+dataanalyticsManager:
+  url: http://10.1.1.61:2030
+  
+isLocalTest: true
+localUser: admin

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.BatchRestMapper">
+
+	<select id="getBatchList" resultType="batchService">
+		SELECT 
+			*
+			, (SELECT NAME FROM TB_PROJECT WHERE PROJECT_SEQ = batch.PROJECT_SEQ) AS projectName
+		    , (SELECT NAME FROM TB_MODEL WHERE MODEL_SEQ = batch.MODEL_SEQ) AS modelName
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_BATCH_SERVICE AS batch
+		WHERE DELETE_FLAG = 0
+			<if test='userId != null and userId != ""' >AND USER_ID=#{userId}</if>
+		ORDER BY BATCH_SERVICE_SEQ DESC
+	</select>
+   
+	<select id="getBatch" resultType="batchService">
+		SELECT
+			*
+			, (SELECT NAME FROM TB_PROJECT WHERE PROJECT_SEQ = batch.PROJECT_SEQ) AS projectName
+		    , (SELECT NAME FROM TB_MODEL WHERE MODEL_SEQ = batch.MODEL_SEQ) AS modelName
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_BATCH_SERVICE AS batch
+		WHERE BATCH_SERVICE_SEQ = #{batchServiceSeq}
+	</select>
+	
+	
+	<select id="duplicateCheckBatchName" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+		TB_BATCH_SERVICE
+		WHERE DELETE_FLAG = 0 
+			AND NAME = #{name}
+	</select>
+	
+	<insert id="insertBatch" parameterType="batchService" useGeneratedKeys="true"
+			keyColumn="BATCH_SERVICE_SEQ" keyProperty="batchServiceSeq">
+		INSERT INTO TB_BATCH_SERVICE(
+			PROJECT_SEQ
+			,MODEL_SEQ
+			,NAME
+			,EXECUTION_CYCLE
+			,USER_ID
+			,INPUT_FILE_PATH
+			,INPUT_FILE_RULE
+			,OUTPUT_FILE_PATH
+			,OUTPUT_FILE_RULE
+   		)
+		VALUES (
+	          #{projectSeq}
+			  , #{modelSeq}
+	          , #{name}
+	          , #{executionCycle}
+	          , #{userId}
+	          , #{inputFilePath}
+	          , #{inputFileRule}
+	          , #{outputFilePath}
+	          , #{outputFileRule}
+       	)
+	</insert>
+	
+	<update id="updateBatch" parameterType="batchService">
+		UPDATE TB_BATCH_SERVICE
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='projectSeq != null and projectSeq != ""' >,PROJECT_SEQ = #{projectSeq}</if>
+				<if test='modelSeq != null and modelSeq != ""' >,MODEL_SEQ = #{modelSeq}</if>
+				<if test='name != null and name != ""' >,NAME = #{name}</if>
+				<if test='executionCycle != null and executionCycle != ""' >,EXECUTION_CYCLE = #{executionCycle}</if>
+				<if test='batchState != null and batchState != ""' >,BATCH_STATE = #{batchState}</if>
+				<if test='deleteFlag != null' >,DELETE_FLAG = #{deleteFlag}</if>
+				<if test='inputFilePath != null and inputFilePath != ""' >,INPUT_FILE_PATH = #{inputFilePath}</if>
+				<if test='inputFileRule != null and inputFileRule != ""' >,INPUT_FILE_RULE = #{inputFileRule}</if>
+				<if test='outputFilePath != null and outputFilePath != ""' >,OUTPUT_FILE_PATH = #{outputFilePath}</if>
+				<if test='outputFileRule != null and outputFileRule != ""' >,OUTPUT_FILE_RULE = #{outputFileRule}</if>
+			</trim>
+		WHERE BATCH_SERVICE_SEQ = #{batchServiceSeq}
+	</update>
+</mapper>

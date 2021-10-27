@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<script th:src="@{js/user/demonDetail.js}"></script>
+	
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h4><strong>데몬 테스트 </strong></h4>
+                    <div class="navbar-right">
+                    	<button type="submit" class="btn btn-primary" onclick="fnCommandDemon();">분석</button>
+                    </div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+					<form id="demonDetailForm" data-parsley-validate class="form-horizontal form-label-left">
+						<input type="hidden" class="form-control" id="demonServiceSeq" th:value="${demonServiceSeq}">
+						<input type="hidden" class="form-control" id="modelSeq">
+                      <div class="form-group">
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">데몬명</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="name" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">프로젝트</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="projectName" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">모델</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="modelName" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>
+<!-- 
+                      <div class="form-group">
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">학습 데이터</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="trainDataName" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">검증 데이터</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="validationDataName" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">평가 데이터</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="evaluationDataName" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">알고리즘</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="algorithmName" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">임베딩 모델</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="embeddingModelName" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="first-name">학습된 모델</label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <input type="text" id="pretrainedModelName" readonly class="form-control col-md-7 col-xs-12">
+                        </div>
+                      </div>
+ -->
+                      <div class="form-group">
+                        <label class="custom-paddingTop col-md-1 col-sm-3 col-xs-12" for="last-name">입력 <span class="required">*</span>
+                        </label>
+                        <div class="col-md-11 col-sm-6 col-xs-12">
+                        	<textarea class="form-control" id="content" required="required" rows="5"></textarea>
+                        </div>
+                      </div>
+                    </form>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row" id="demonResultDiv" style="display:none;">
+              <div class="col-md-12 col-xs-12">
+                <div class="x_panel">
+                	<div class="x_title">
+	                    <h5><strong>분석 결과</strong></h5>
+	                    <ul class="nav navbar-right panel_toolbox">
+	                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+	                      </li>
+	                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+	                      </li>
+	                    </ul>
+	                    <div class="clearfix"></div>
+	                </div>
+	                <div class="x_content">
+	                    <br />
+	                    <form class="form-horizontal form-label-left input_mask">
+	                      <textarea rows="10" class="form-control" id="demonResult" readonly></textarea>
+	                    </form>
+	                 </div>
+                </div>
+              </div>
+            </div>               
+          </div>
+        </div>
+        <!-- /page content -->
+        
+        <!-- modal -->
+        <!-- modal -->
+        
+	</th:block>
+</body>
+</html>

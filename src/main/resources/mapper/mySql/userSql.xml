@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.UserRestMapper">
+
+   <select id="getUserInfo" parameterType="user" resultType="user">
+		SELECT * FROM TB_USER 
+		WHERE USER_ID = #{userId}
+			AND USER_PW = #{userPw}
+			AND USE_FLAG = 1
+   </select>
+   
+   <update id="updateLastAccessDate">
+   		UPDATE TB_USER
+		SET LAST_ACCESS_DATE = NOW()
+		WHERE ID = #{id}
+   </update>
+
+	<select id="getUserList" resultType="user">
+		SELECT
+		    *
+		    , ifnull(DATE_FORMAT(LAST_ACCESS_DATE, '%Y-%m-%d'), '-') AS lastAccessDate
+    		, ifnull(DATE_FORMAT(REGISTER_DATE, '%Y-%m-%d %T'), '-') AS registerDate
+		FROM TB_USER
+		ORDER BY ID DESC
+	</select>
+   
+   <select id="getUser" resultType="user">
+   		SELECT
+		    *
+		    , ifnull(DATE_FORMAT(LAST_ACCESS_DATE, '%Y-%m-%d'), '-') AS lastAccessDate
+    		, ifnull(DATE_FORMAT(REGISTER_DATE, '%Y-%m-%d %T'), '-') AS registerDate
+		FROM TB_USER 
+   		WHERE ID = #{id}
+   </select>
+   
+   <select id="duplicateCheckUserId" resultType="java.lang.Integer">
+   		SELECT
+		    count(*)
+		FROM TB_USER 
+   		WHERE USER_ID = #{userId} 
+   </select>
+   
+   <insert id="insertUser" parameterType="user"
+   						useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+   		INSERT INTO TB_USER(
+   			USER_ID
+   			, USER_NAME
+   			, EMAIL
+   			, USER_PW
+   			, REGISTERER
+   			, USER_AUTH
+   			, USE_FLAG
+   			)
+		VALUES (
+        	 #{userId}
+	          , #{userName}
+			  , #{email}
+			  , #{userPw}
+	          , #{registerer}
+	          , #{userAuth}
+	          , #{useFlag}
+       	)
+   </insert>
+   
+   <update id="updateUser" parameterType="user">
+   		UPDATE TB_USER
+   			<trim prefix="SET" suffixOverrides=",">
+				<if test='userName != null and userName != "null" and userAuth != ""' >USER_NAME = #{userName},</if>
+	   			<if test='email != null and email != "null" and email != ""' >EMAIL = #{email},</if>
+	   			<if test='useFlag != null' >USE_FLAG = #{useFlag},</if>
+				<if test='userAuth != null and userAuth != "null" and userAuth != ""' >USER_AUTH = #{userAuth},</if>
+				<if test='userPw != null and userPw != "null" and userPw != ""' >USER_PW = #{userPw},</if>
+   			</trim>
+		WHERE ID = #{id}
+   </update>
+   
+   <delete id="deleteUser">
+   		DELETE FROM TB_USER WHERE ID = #{id}
+   </delete>
+   
+   <select id="findUserId" parameterType="user" resultType="user">
+   		SELECT * FROM TB_USER
+   		WHERE 1 = 1
+   			<if test='userId != null and userId != "null" and userId != ""' >AND USER_ID = #{userId}</if>
+   			<if test='userName != null and userName != "null" and userName != ""' >AND USER_NAME = #{userName}</if>
+   			<if test='email != null and email != "null" and email != ""' >AND EMAIL = #{email}</if>
+   </select>
+   
+</mapper>

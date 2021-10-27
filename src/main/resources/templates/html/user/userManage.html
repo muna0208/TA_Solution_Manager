@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+  layout:decorator="layout/defaultLayout">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<th:block layout:fragment="content">
+	<script th:src="@{js/user/userManage.js}"></script>
+	
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h4><strong>사용자 관리 </strong></h4>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="row">
+					  <div class="col-md-12 col-sm-12 col-xs-12 text-right">
+						  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".infoModal" onClick="fnAddUserModal()">등록</button>
+						  <button type="button" class="btn btn-default" onClick="fnDeleteUser()">삭제</button>
+					  </div>
+				  </div>
+                  <div class="x_content">
+                  	<table id="datatable-user" class="table table-striped jambo_table table-bordered bulk_action custom-tbTextCenter">
+						<thead>
+							<tr>
+								<th><input type="checkbox" id="check-all" class="flat"></th>
+								<th>이름</th>
+								<th>아이디</th>								
+								<th>이메일</th>
+								<th>권한</th>
+								<th>최근 접속일</th>
+								<th>등록자</th>
+								<th>등록일</th>
+								<th>사용여부</th>
+								<th>수정</th>
+							</tr>
+						</thead>
+						<tbody id="tbodyHtml">
+							
+						</tbody>
+					</table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <!-- /page content -->
+        
+        <!-- modal -->
+        <div class="modal fade infoModal" tabindex="-1" role="dialog" aria-hidden="false">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+					  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+					  </button>
+					  <h4 class="modal-title" id="myModalLabel"><strong><span id="modalTitle"></span></strong></h4>
+					</div>
+					<div class="modal-body">
+						<form id="userForm" class="form-horizontal form-label-left" data-parsley-validate>
+							<div class="modal-body">
+								<div class="item form-group">
+									<label class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">아이디 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="text" class="form-control" placeholder="ID" id="m_userId" name="m_userId" required>
+									  <input type="hidden" id="m_Id" name="m_Id">
+									</div>
+								</div>
+								<div class="item form-group">
+									<label class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">이름 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="text" class="form-control" placeholder="홍길동" id="m_userName" name="m_userName" required>
+									</div>
+								</div>
+								<div class="item form-group">
+									<label class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">이메일 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="email" class="form-control" placeholder="abc@daumsoft.com" id="email" name="email" required>
+									</div>
+								</div>
+								<div class="item form-group">
+									<label for="password" class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">비밀번호 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="password" class="form-control" placeholder="6~12자리 입력해주세요." id="password" name="password" data-parsley-length="[6, 12]" required>
+									</div>
+								</div>
+								<div class="item form-group">
+									<label for="confirmPassword" class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">비밀번호 확인 <span class="required">*</span></label>
+									<div class="col-md-7 col-sm-9 col-xs-12">
+									  <input type="password" class="form-control" placeholder="6~12자리 입력해주세요." id="confirmPassword"  name="confirmPassword" data-parsley-equalto="#password" data-parsley-length="[6, 12]" required>
+									</div>
+								</div>
+								<div class="item form-group ">
+									<label class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">사용자 권한</label>
+									<div class="col-md-6 col-sm-9 col-xs-12 mgTop_5">
+										<label><input type="radio" class="flat" name="userAuth" id="user" checked> <span class="posiRelative top_2">사용자</span></label>
+										<label><input type="radio" class="flat" name="userAuth" id="admin"> <span class="posiRelative top_2">관리자</span></label>
+									</div>
+								</div>
+								<div class="item form-group ">
+									<label class="control-label col-md-4 col-sm-3 col-xs-12 ta_left">사용 여부</label>
+									<div class="col-md-6 col-sm-9 col-xs-12 mgTop_5">
+										<label><input type="radio" class="flat" name="useFlag" id="Y" checked> <span class="posiRelative top_2">사용 </span></label>
+										<label><input type="radio" class="flat" name="useFlag" id="N"> <span class="posiRelative top_2">미사용</span></label>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success" id="saveUserBtn"></button>
+					  	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+        <!-- modal -->
+        
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.daumsoft.taSolutionManager.restFullApi.mapper.ProjectRestMapper">
+
+	<select id="getProjectList" resultType="project">
+		SELECT 
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_PROJECT  
+		WHERE DELETE_FLAG = 0
+			<if test='userId != null and userId != ""' >AND USER_ID=#{userId}</if>
+		ORDER BY PROJECT_SEQ DESC
+	</select>
+   
+	<select id="getProject" resultType="project">
+		SELECT
+			*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM
+		TB_PROJECT
+		WHERE PROJECT_SEQ = #{projectSeq}
+	</select>
+	
+	<select id="duplicateCheckProjectName" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+		TB_PROJECT
+		WHERE DELETE_FLAG = 0 
+			AND NAME = #{name}
+	</select>
+	
+	<insert id="insertProject" parameterType="project" useGeneratedKeys="true"
+			keyColumn="PROJECT_SEQ" keyProperty="projectSeq">
+		INSERT INTO TB_PROJECT(
+			NAME
+			,DESCRIPTION
+			,USER_ID
+   		)
+		VALUES (
+	          #{name}
+			  , #{description}
+	          , #{userId}
+       	)
+	</insert>
+	
+	<update id="updateProject" parameterType="project">
+		UPDATE TB_PROJECT
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='name != null and name != ""' >,NAME = #{name}</if>
+				<if test='description != null and description != ""' >,DESCRIPTION = #{description}</if>
+				<if test='deleteFlag != null' >,DELETE_FLAG = #{deleteFlag}</if>
+			</trim>
+		WHERE PROJECT_SEQ = #{projectSeq}
+	</update>
+	
+	<select id="getModelList" resultType="model" parameterType="model">
+		SELECT 
+			model.*
+			, ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime 
+		FROM TB_MODEL AS model
+		WHERE DELETE_FLAG = 0
+			<if test='projectSeq != null and projectSeq != ""' >AND PROJECT_SEQ = #{projectSeq}</if>
+			<if test='trainState != null and trainState != ""' >AND TRAIN_STATE = #{trainState}</if>
+			<if test='domainFlag != null'>
+				AND ALGORITHM_SEQ IN (SELECT ALGORITHM_SEQ FROM TB_ALGORITHM WHERE DOMAIN_FLAG = #{domainFlag})
+			</if>
+		ORDER BY MODEL_SEQ DESC
+	</select>
+	
+	<select id="getModel" resultType="model">
+		SELECT model.*
+		    ,(SELECT NAME FROM TB_PREPROCESSED_DATA WHERE PREPROCESSED_DATA_SEQ = model.TRAIN_DATA) AS trainDataName
+		    ,(SELECT NAME FROM TB_PREPROCESSED_DATA WHERE PREPROCESSED_DATA_SEQ = model.VALIDATION_DATA) AS validationDataName
+		    ,(SELECT NAME FROM TB_PREPROCESSED_DATA WHERE PREPROCESSED_DATA_SEQ = model.EVALUATION_DATA) AS evaluationDataName
+		    ,(SELECT NAME FROM TB_ALGORITHM WHERE ALGORITHM_SEQ = model.ALGORITHM_SEQ) AS algorithmName
+		    ,(SELECT NAME FROM TB_PROJECT WHERE PROJECT_SEQ = model.PROJECT_SEQ) AS projectName
+		    , ifnull(DATE_FORMAT(TRAIN_START_DATETIME, '%Y-%m-%d %T'), '') AS trainStartDateTime
+		    , ifnull(DATE_FORMAT(TRAIN_END_DATETIME, '%Y-%m-%d %T'), '') AS trainEndDateTime
+		    , ifnull(DATE_FORMAT(EVALUATION_START_DATETIME, '%Y-%m-%d %T'), '') AS evaluationStartDateTime
+		    , ifnull(DATE_FORMAT(EVALUATION_END_DATETIME, '%Y-%m-%d %T'), '') AS evaluationEndDateTime
+		    , ifnull(DATE_FORMAT(CREATE_DATETIME, '%Y-%m-%d %T'), '-') AS createDatetime
+		FROM TB_MODEL AS model 
+		WHERE MODEL_SEQ = #{modelSeq}
+	</select>
+	
+	<select id="duplicateCheckModelName" resultType="java.lang.Integer">
+		SELECT count(*)
+		FROM TB_MODEL 
+		WHERE DELETE_FLAG = 0 
+			AND NAME = #{name}
+	</select>
+	
+	<insert id="insertModel" parameterType="model" useGeneratedKeys="true"
+		keyColumn="MODEL_SEQ" keyProperty="modelSeq">
+		INSERT INTO TB_MODEL(
+			PROJECT_SEQ
+			,ALGORITHM_SEQ
+			,TRAIN_DATA
+			,VALIDATION_DATA
+			,EVALUATION_DATA
+			,EMBEDDING_MODEL
+			,PRETRAINED_MODEL
+			,NAME	
+			,PARAMETERS
+   		)
+		VALUES (
+	       	 #{projectSeq}
+	          , #{algorithmSeq}
+			  , #{trainData}
+	          , #{validationData}
+	          , #{evaluationData}
+			  , #{embeddingModel}
+	          , #{pretrainedModel}
+	          , #{name}
+			  , #{parameters}
+       	)
+	</insert>
+	
+	<update id="updateModel" parameterType="model">
+		UPDATE TB_MODEL
+			<trim prefix="SET" prefixOverrides=",">
+				<if test='path != null and path != ""' >,PATH = #{path}</if>
+				<if test='deleteFlag != null' >,DELETE_FLAG = #{deleteFlag}</if>
+			</trim>
+		WHERE MODEL_SEQ = #{modelSeq}
+	</update>
+</mapper>
